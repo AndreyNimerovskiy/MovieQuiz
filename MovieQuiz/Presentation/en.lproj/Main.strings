@@ -1,0 +1,15 @@
+
+/* Class = "UILabel"; text = "Рейтинг этого фильма больше чем 5 ?"; ObjectID = "Qkb-wx-SVY"; */
+"Qkb-wx-SVY.text" = "Рейтинг этого фильма больше чем 5 ?";
+
+/* Class = "UIButton"; normalTitle = "Нет"; ObjectID = "ZhT-NN-pNb"; */
+"ZhT-NN-pNb.normalTitle" = "Нет";
+
+/* Class = "UIButton"; normalTitle = "Да"; ObjectID = "auN-qt-hHw"; */
+"auN-qt-hHw.normalTitle" = "Да";
+
+/* Class = "UILabel"; text = "1/10"; ObjectID = "e31-NH-ifJ"; */
+"e31-NH-ifJ.text" = "1/10";
+
+/* Class = "UILabel"; text = "Вопрос:"; ObjectID = "fDA-73-54f"; */
+"fDA-73-54f.text" = "Вопрос:";
