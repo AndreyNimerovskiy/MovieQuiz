@@ -100,14 +100,14 @@ final class MovieQuizViewController: UIViewController {
     
     // Active- кнопки активные
     
-    @IBAction func yesButton(_ sender: UIButton) {
+    @IBAction private func yesButton(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = true
         
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     
-    @IBAction func noButton(_ sender: UIButton) {
+    @IBAction private func noButton(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = false
         
