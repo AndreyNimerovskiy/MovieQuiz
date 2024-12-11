@@ -8,16 +8,17 @@
 import UIKit
 
 final class StatisticService: StatisicServiceProtocol {
+    
     private let userDefaults: UserDefaults = .standard
+    
+    private enum Keys: String {
+        case correct
+        case total
+        case bestGame
+        case gamesCount
+    }
         
-        private enum Keys: String {
-            case correct
-            case total
-            case bestGame
-            case gamesCount
-        }
-        
-        var gamesCount: Int {
+    var gamesCount: Int {
             get {
                 return userDefaults.integer(forKey: Keys.gamesCount.rawValue)
             }
@@ -25,6 +26,7 @@ final class StatisticService: StatisicServiceProtocol {
                 userDefaults.set(newValue, forKey: Keys.gamesCount.rawValue)
             }
         }
+        
         var bestGame: GameResult {
             get {
                 guard let data = userDefaults.data(forKey: Keys.bestGame.rawValue),
@@ -41,6 +43,7 @@ final class StatisticService: StatisicServiceProtocol {
             }
             
         }
+        
         var totalAccuracy: Double {
             get {
                 userDefaults.double(forKey: Keys.total.rawValue)
@@ -62,4 +65,4 @@ final class StatisticService: StatisicServiceProtocol {
                 totalAccuracy = Double(totalCorrectAnswers) / Double(totalQuestions)
             }
         }
-}
+    }
