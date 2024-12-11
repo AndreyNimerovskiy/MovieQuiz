@@ -20,19 +20,43 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticService = StatisticService()
     
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     
     override func viewDidLoad() {
-    alertPresenter = AlertPresenter(delegate: self)
+        alertPresenter = AlertPresenter(delegate: self)
+            
+            questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+
+            showLoadingIndicator()
+            questionFactory?.loadData()
+            
+            super.viewDidLoad()
+        }
+    
+    private func showLoadingIndicator() {
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
+        }
+    
+    private func hideLoadingIndicator() {
+            activityIndicator.stopAnimating()
+            activityIndicator.hidesWhenStopped = true
+        }
+    
+    func didLoadDataFromServer() {
+            activityIndicator.isHidden = true
+            questionFactory?.requestNextQuestion()
+        }
         
-        questionFactory = QuestionFactory(delegate: self)
-        
-        questionFactory?.requestNextQuestion()
-        
-        super.viewDidLoad()
-    }
+    
+    func didFailToLoadData(with error: Error) {
+           showNetworkError(message: error.localizedDescription)
+       }
+    
+    
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else {
@@ -79,6 +103,25 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         )
         alertPresenter?.show(alertModel: alertModel)
     }
+    
+    private func showNetworkError(message: String) {
+            hideLoadingIndicator()
+            
+            let alertModel = AlertModel(title: "Что-то пошло не так(",
+                                   message: message,
+                                   buttonText: "Попробовать еще раз") { [weak self] in
+                guard let self = self else { return }
+                
+                self.currentQuestionIndex = 0
+                self.correctAnswers = 0
+                
+                self.questionFactory?.loadData()
+            }
+            
+            alertPresenter?.show(alertModel: alertModel)
+        }
+    
+    
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
