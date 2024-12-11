@@ -5,14 +5,14 @@
 //  Created by Mac on 10.12.2024.
 //
 
-import UIKit
+import Foundation
 
-struct GameResult: Codable {
+struct GameResult {
     let correct: Int
     let total: Int
     let date: Date
     
-    func isBetterThan(_ another: GameResult) -> Bool {
+    func isBestScore(_ another: GameResult) -> Bool {
         correct > another.correct
     }
 }

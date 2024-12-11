@@ -5,10 +5,10 @@
 //  Created by Mac on 10.12.2024.
 //
 
-import UIKit
+import Foundation
 
-protocol StatisicServiceProtocol {
-    var gamesCount: Int { get }
+protocol StatisticServiceProtocol {
+    var gamesCount: Int { get set }
     var bestGame: GameResult { get }
     var totalAccuracy: Double { get }
     

@@ -5,64 +5,61 @@
 //  Created by Mac on 10.12.2024.
 //
 
-import UIKit
+import Foundation
 
-final class StatisticService: StatisicServiceProtocol {
-    
-    private let userDefaults: UserDefaults = .standard
+final class StatisticService: StatisticServiceProtocol {
+    private let storage: UserDefaults = .standard
     
     private enum Keys: String {
-        case correct
-        case total
-        case bestGame
         case gamesCount
+        case bestGameCorrect
+        case bestGameTotal
+        case bestGameDate
+        case correctAnswers
+        case totalQuestions
     }
-        
+    
     var gamesCount: Int {
-            get {
-                return userDefaults.integer(forKey: Keys.gamesCount.rawValue)
-            }
-            set {
-                userDefaults.set(newValue, forKey: Keys.gamesCount.rawValue)
-            }
-        }
-        
-        var bestGame: GameResult {
-            get {
-                guard let data = userDefaults.data(forKey: Keys.bestGame.rawValue),
-                      let result = try? JSONDecoder().decode(GameResult.self, from: data) else {
-                    return .init(correct: 0, total: 0, date: Date())
-                }
-                return result
-            }
-            set {
-                guard let data = try? JSONEncoder().encode(newValue) else {
-                    return
-                }
-                userDefaults.set(data, forKey: Keys.bestGame.rawValue)
-            }
-            
-        }
-        
-        var totalAccuracy: Double {
-            get {
-                userDefaults.double(forKey: Keys.total.rawValue)
-            }
-            set {
-                userDefaults.set(newValue, forKey: Keys.total.rawValue)
-            }
-        }
-        
-        func store(correct count: Int, total amount: Int) {
-            let newRecord = GameResult(correct: count, total: amount, date: Date())
-            if newRecord.isBetterThan(bestGame) {
-                bestGame = newRecord
-            }
-            gamesCount += 1
-            let totalCorrectAnswers = bestGame.correct + count
-            let totalQuestions: Int = bestGame.total + amount
-            if totalQuestions != 0 {
-                totalAccuracy = Double(totalCorrectAnswers) / Double(totalQuestions)
-            }
-        }
+        get { return storage.integer(forKey: Keys.gamesCount.rawValue) }
+        set { storage.set(newValue, forKey: Keys.gamesCount.rawValue) }
     }
+    
+    var bestGame: GameResult {
+           get {
+               let correctAnswers = storage.integer(forKey: Keys.bestGameCorrect.rawValue)
+               let totalQuestions = storage.integer(forKey: Keys.bestGameTotal.rawValue)
+               let date = storage.object(forKey: Keys.bestGameDate.rawValue) as? Date ?? Date()
+               
+               return GameResult(correct: correctAnswers, total: totalQuestions, date: date)
+           }
+           set {
+               storage.set(newValue.correct, forKey: Keys.bestGameCorrect.rawValue)
+               storage.set(newValue.total, forKey: Keys.bestGameTotal.rawValue)
+               storage.set(newValue.date, forKey: Keys.bestGameDate.rawValue)
+           }
+       }
+       
+       var totalAccuracy: Double {
+           let correctAnswers = storage.integer(forKey:Keys.correctAnswers.rawValue)
+           let totalQuestions = storage.integer(forKey: Keys.totalQuestions.rawValue)
+           
+           guard totalQuestions > 0 else { return 0 }
+           
+           return Double(correctAnswers) / Double(totalQuestions) * 100
+       }
+       
+       func store(correct count: Int, total amount: Int) {
+           gamesCount += 1
+           
+           let updatedCorrectAnswers = storage.integer(forKey: Keys.correctAnswers.rawValue) + count
+           let updatedTotalQuestions = storage.integer(forKey: Keys.totalQuestions.rawValue) + amount
+           
+           storage.set(updatedCorrectAnswers, forKey: Keys.correctAnswers.rawValue)
+           storage.set(updatedTotalQuestions, forKey: Keys.totalQuestions.rawValue)
+           
+           let currentGame = GameResult(correct: count, total: amount, date: Date())
+           if currentGame.isBestScore(bestGame) {
+               bestGame = currentGame
+           }
+       }
+   }

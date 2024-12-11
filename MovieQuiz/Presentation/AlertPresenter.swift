@@ -5,30 +5,24 @@
 //  Created by Mac on 10.12.2024.
 //
 
+import Foundation
 import UIKit
 
-final class AlertPresenter: AlertPresenterProtocol {
-    
-    weak var delegate: AlertPresenterDelegate?
-    
-    func show(alertModel: AlertModel) {
-        let alert = UIAlertController(
-            title: alertModel.title,
-            message: alertModel.message,
-            preferredStyle: .alert)
-        
-        let action = UIAlertAction(
-            title: alertModel.buttonText,
-            style: .default,
-            handler: { _ in
-                alertModel.buttonAction?()
-            })
-        
-        alert.addAction(action)
-        delegate?.show(alert: alert)
-    }
-    
-    init(delegate: AlertPresenterDelegate?) {
-        self.delegate = delegate
+final class AlertPresenter {
+    func showAlert(on viewController: UIViewController, with model: AlertModel) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: model.title,
+                                          message: model.message,
+                                          preferredStyle: .alert)
+            alert.view.accessibilityIdentifier = "Alert"
+            
+            let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
+                model.completion?()
+            }
+            action.accessibilityIdentifier = "ReplayButton"
+            
+            alert.addAction(action)
+            viewController.present(alert, animated: true, completion: nil)
+        }
     }
 }
