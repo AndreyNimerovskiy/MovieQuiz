@@ -74,16 +74,8 @@ public class QuestionFactory: QuestionFactoryProtocol {
             }
         }
     }
-    
-    // MARK: - Массив вопросов
-    
-    
-    
-    //    func setup(delegate: QuestionFactoryDelegate) {
-    //        self.delegate = delegate
-    //    }
-    
-    
+  
+
 
 //    private var questions: [QuizQuestion] = [
 //        QuizQuestion(
